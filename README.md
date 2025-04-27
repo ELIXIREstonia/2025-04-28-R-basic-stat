@@ -1,4 +1,4 @@
-# 2025-02-18-R-basic-stat
+# 2025-04-28-R-basic-stat
 
 ELIXIR-EE training course on introduction to statistics in R. This course is designed to provide researchers in biomedical sciences with experience in the application of basic statistical analysis techniques to a variety of biological problems. The course extensively covers materials from https://sib-swiss.github.io/Introduction-to-statistics-with-R/
 
@@ -8,7 +8,7 @@ This course is a mixture of lectures and practicals. The main files for practisi
 
 Data files needed in the code are located in the `data` folder.
 
-The lecture slides are found in [https://zenodo.org/records/14883678](https://zenodo.org/records/14883678)
+The lecture slides are found in [https://zenodo.org/records/14883678](https://zenodo.org/records/15282248)
 
 Learning outcomes:
 
