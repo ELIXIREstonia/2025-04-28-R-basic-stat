@@ -31,14 +31,11 @@ if(!require(pwr)){
 
 #### Multiple sample tests: ANOVA, Tukey post-hoc test, Kruskal-Wallis
 
-![](images/clipboard-4197200563.png){width="502"}
+Let's revise what we have learnt so far - download and open the `stat_test_tree.html` to see what we have covered.
 
 How to statistically compare the mean of more than two groups?
 
 -   we can do multiple t-tests with multiple testing correction
-
-<!-- -->
-
 -   we can do ANOVA - ANalysis Of VAriance → allows to do determine whether there are any statistically significant differences between the means of three or more independent groups. It compares variation between groups to variation within groups to determine whether the observed differences are due to chance or not.
 
 Null hypothesis: all group means are equal;
@@ -47,35 +44,30 @@ Alternative hypothesis: at least one mean is different.
 
 ![](images/clipboard-1080744626.png){width="861"}
 
-**Task**: run the ANOVA on `PlantGrowth.csv` data to determine if these groups (ctrl, trt1, trt2) differ from each other.
+**Task**: run the ANOVA on `iris` dataset to determine if these species (setosa, versicolor, virginica) statistically differ from each other based on the petal length.
 
-Read in the data (the file is in the Github repo under data folder and summarize the groups visually using a violin plot.
+Summarize the species groups visually using a violin plot.
 
 ```{r}
-# TODO: finish this function with your file path to PlantGrowth.csv
-#PlantGrowth <- read.csv("", header = T)
 
-# TODO: show the different groups using a violin plot 
 ```
 
 Now check if the assumptions are met for ANOVA:
 
--   Data in every treatment group (ctrl, trt1, trt2) is normally distributed (hint: `shapiro_test`)
+-   Data in every treatment species (setosa, versicolor, virginica) is normally distributed (hint: `shapiro_test`)
 
 -   Equal/homogeneous within group variance (hint: `levene_test`)
 
 ```{r}
-
 ```
 
 Here is a Q-Q plot for all of the groups.
 
 ```{r}
-# Create Q-Q plots with facets
-ggplot(PlantGrowth, aes(sample = weight)) +
+ggplot(iris, aes(sample = Petal.Length)) +
   stat_qq() +
   stat_qq_line() +
-  facet_wrap(~ group) +
+  facet_wrap(~ Species) +
   labs(
     title = "Q-Q Plots of Weight by Group",
     x = "Theoretical Quantiles",
@@ -83,17 +75,26 @@ ggplot(PlantGrowth, aes(sample = weight)) +
   ) 
 ```
 
-Now let's run the ANOVA test (hint: `aov()`) and take a look at the summary of the test.
+Now let's run the ANOVA test (hint: `aov()`, ensure that left-hand is numeric, and right-hand is a factor) and take a look at the summary of the test (`summary()`).
 
 ```{r}
 
 ```
 
-![](images/clipboard-2880498119.png)
+![](images/clipboard-1166017864.png)Residuals=Observed Petal.Length−Species Group Mean Petal.Length
+What can we conclude from this?
+
+-   there are very strong differences in petal length between species
+
+-   the species explains almost all the variability in petal length
 
 If the p-value indicates a significant result, you can follow up with post-hoc tests to identify which groups are significantly different.
 
 For performing multiple pairwise comparisons between groups, Tukey post-hoc test is often used (HSD = honestly significant difference, hint: use `TukeyHSD`). Plot the output of `TukeyHSD` using the built-in `plot()`.
+
+there are very strong differences in petal.length between species
+
+the species explains almost all the variability in peal length
 
 ```{r}
 
@@ -109,21 +110,23 @@ $$
 
 where $s$ is the sample standard deviation, $n$ is the sample size, and $\bar{x}$ is the sample mean.
 
-If any of the ANOVA assumptions (independent observations, equal variance, normal distribution) are not met: non-parametric alternative is the Kruskal-Wallis (`kruskal_test` can be used for this)
+### Non-parametric multiple group testing: Kruskal-Wallis
+
+If any of the ANOVA assumptions (independent observations, equal variance, normal distribution) are not met: non-parametric alternative is the Kruskal-Wallis (`kruskal_test` can be used for this). For post-hoc testing, you can use Dunn's test (`dunn_test`)
 
 ```{r}
-#kruskal_test(PlantGrowth, weight ~ group)
+#kruskal_test(iris, Petal.Length ~ Species)
 ```
 
 NB! while doing multiple pairwise comparisons, you need to correct the p-value (either by Bonferroni, Holm etc., the approaches were covered on Day 1)
 
-What if you want to estimate the combined effect (i.e. you have more than one variable) of some parameters on weight (such as treatment type and concentration)? Multi-factorial ANOVA is the way to go.
+What if you want to estimate the combined effect (i.e. you have more than one variable) of some parameters on Species (such as Petal length and Sepal length)? Multi-factorial ANOVA is the way to go.
 
-You can use \* to combine different parameters e.g. aov(weight \~ treatment_group \* concentration).
+You can use \* to combine different parameters e.g. aov(iris\$Species \~ iris\$Petal.Length \* iris\$Sepal.Length).
 
-#### **Correlation and regression**: Pearson, Spearman (rank), Kendal (rank), linear/polynomial regression, linear mixed models.
+#### **Correlation and regression**: Pearson, Spearman (rank), Kendall (rank), linear/polynomial regression, linear mixed models.
 
-Theory: <https://zenodo.org/records/14918657/files/Correlation_and_simple_reg_25.pdf?download=1>
+Theory: <https://zenodo.org/records/15282248/files/Corr_simple_reg_25_new_ver.pdf?download=1>
 
 **Task**: Find the correlation between the two columns (velocity and glucose) in the data set `thuesen`. Test with the suitable correlations. What parameter do you have to add to avoid getting the error message? (for NA values)
 
@@ -192,19 +195,19 @@ Let's take a look at the summary of the regression line.
 
 **Task**: Try to make sense of the output above by answering the following questions:
 
-1) What are residuals in linear regression?
+1)  What are residuals in linear regression?
 
 Answer:
 
-2) What does the p-value for the slope (glucose) mean?
+2)  What does the p-value for the slope (glucose) mean?
 
 Answer:
 
-3) How to determine the degrees of freedom?
+3)  How to determine the degrees of freedom?
 
 Answer:
 
-4) What is the residual standard error? Could you obtain the same value as in the summary by re-creating the formula in the code block below?
+4)  What is the residual standard error? Could you obtain the same value as in the summary by re-creating the formula in the code block below?
 
 Answer:
 
@@ -212,7 +215,7 @@ Answer:
 
 ```
 
-5) What are multiple R-squared, adjusted R-squared, F-statistic?
+5)  What are multiple R-squared, adjusted R-squared, F-statistic?
 
 Answer:
 
@@ -254,31 +257,31 @@ ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length)) +
   theme_minimal()
 ```
 
-Recall ANOVA? ANOVA is a special case of linear regression where you treat the group membership as categorical predictor. Let's take a look back at our PlantGrowth dataset.
+Recall ANOVA? ANOVA is a special case of linear regression where you treat the group membership (Species) as categorical predictor, and the main interest is whether group means differ significantly. Let's take a look.
 
 ```{r}
-model_anova_lm <- lm(weight ~ group, data = PlantGrowth)
+#model_anova_lm <- lm(Petal.Length ~ Species, data = iris)
 
-# Summary of the model to view p-value for group comparison, 
+# Summary of the model to view p-value for group comparison
 # here the intercept is ctrl
-summary(model_anova_lm)
+#summary(model_anova_lm)
 ```
 
 **Briefly about linear mixed models**
 
 Let's look at this example: <http://mfviz.com/hierarchical-models/>
 
-Mixed model is a model that takes into account fixed and random effects (in biology, these might be experimental repeats, drug intake by humans).
+Mixed model is a model that takes into account fixed and random effects (in biology, these might be experimental repeats, in medicine, drug intake by humans).
 
 This implementation requires a strong understanding of the phenomenon you are modeling.
 
-When should I use this? As biological data can be complex and messy, small sample sizes are not always sufficient enough to fit complicated models with many parameters. Data points might not always be truly independent (correlated or hierarchical). You could take the average of each group and evaluate the difference with a statistical test, but this is not covering the data well at all. You could also do separate linear regression models for each comparison, but the models will be noisy and do not take advantage of data from other groups.
+**When should I use this?** As biological data can be complex and messy, small sample sizes are not always sufficient enough to fit complicated models with many parameters. Data points might not always be truly independent (may be correlated or hierarchical). You could take the average of each group and evaluate the difference with a statistical test, but this is not covering the data well at all. You could also do separate linear regression models for each comparison, but the models will be noisy and do not take advantage of data from other groups.
 
 #### Categorical data in statistics
 
 What are examples of categorical data in your work?
 
-Categorical data may derive from observations of quantitative data. They can be ordinal or nominal. The data are often summarized in the form of a contigency table. Something like this below.
+Categorical data may derive from observations of quantitative data. They can be ordinal or nominal. The data are often summarized in the form of a contingency table. Something like this below.
 
 ![](images/clipboard-1190707256.png)
 
@@ -308,36 +311,39 @@ The assumptions:
 
     -   no individual/item should be in multiple categories
 
-Null hypothesis: no significant association between the variables in the population, the variables are independent (the test statistic computed follows a χ2 frequency distribution, shows how likely the observed frequencies would be)
+Null hypothesis: no significant association between the variables in the population, the variables are independent (the test statistic computed follows a χ2 frequency distribution, shows how likely the observed frequencies would be).
 
-Alternative hypothesis: the variables are dependent. Knowing the value of one variable helps to predict the value of the other variable
+Alternative hypothesis: the variables are dependent. Knowing the value of one variable helps to predict the value of the other variable.
 
-Example scenario: Suppose you want to test whether there is an association between gender (Male, Female) and preference for a product (Like, Dislike).
+Example scenario: Suppose you have a group of 100 students: 60 are left-handed, 40 are right-handed and 70 of them like cats and 30 like dogs. We want to test whether there is an association between handedness (right, left) and pet preference (dog, cat).
 
 Let's create a contingency table:
 
 ```{r}
-
-# Create a contingency table (Gender vs Product Preference)
-# Rows: Gender (Male, Female)
-# Columns: Product Preference (Like, Dislike)
-
-data <- matrix(c(30, 10, 20, 40), nrow = 2, byrow = TRUE)
-rownames(data) <- c("Male", "Female")
-colnames(data) <- c("Like", "Dislike")
+data <- matrix(c(60, 40, 30, 70), nrow = 2, byrow = TRUE)
+rownames(data) <- c("Left-handed", "Right-handed")
+colnames(data) <- c("Likes dogs", "Likes cats")
 
 # View the contingency table
 print("Contingency Table:")
 print(data)
 ```
 
-Now let's run a Chi-Square test.
+For each cell expected frequency equals to finding the product of the row ($i$) and column ($j$) total that is divided by the grand total of frequencies:
+
+$$
+E_{ij} = \frac{(\text{Row Total})_i \times (\text{Column Total})_j}{\text{Grand Total}}
+$$
+
+The expected values form a baseline - what the data should like if there is no association between the two variables. i.e. if handedness and pet preference are independent, you'd expect a overlap between the groups to be proportional.
+
+Let's find these values by hand first.
+
+Now let's perform the Chi-Square test
 
 ```{r}
-# Perform the Chi-Square Test
 chi_result <- chisq.test(data)
 
-# Output the test results
 print("Chi-Square Test Result:")
 print(chi_result)
 ```
@@ -350,21 +356,15 @@ Interpreting the output:
 
 -   p-value:
 
-    -   if p-value \< 0.05: significant association between gender and preference;
+    -   if p-value \< 0.05: significant association between handedness and pet preference;
 
     -   else, no significant association
 
-If you want to check the expected frequencies for the Chi-Square test, you can run:
+If you want to double-check the expected frequencies you achieved before:
 
 ```{r}
 chi_result$expected
 ```
-
-For each cell this equals to finding the product of the row ($i$) and column ($j$) total that is divided by the grand total of frequencies:
-
-$$
-E_{ij} = \frac{(\text{Row Total})_i \times (\text{Column Total})_j}{\text{Grand Total}}
-$$
 
 **​Task**: Determine if there is a statistical association in between petal length and plant species in the `iris` data set.
 
@@ -373,7 +373,7 @@ $$
 data(iris)
 ```
 
-Categorize petal length to meet the assumptions of the Chi-Square Test.
+Categorize petal length (min. 3 categories) to meet the assumptions of the Chi-Square Test.
 
 ```{r}
 
@@ -385,7 +385,7 @@ Create a contingency table and perform the Chi-Square Test.
 
 ```
 
-#### Fisher's exact test 
+#### Fisher's exact test
 
 You would want to use the Fisher's exact test for the following reasons:
 
@@ -409,7 +409,7 @@ In this case a 2 × 2 contingency table may be generated and Fisher's exact test
 
 This test assumes genes in either list are taken from a broader set of genes (all remaining genes). A p-value shows the significance of the overlap between the two lists (this test is used e.g. in <https://biit.cs.ut.ee/gprofiler/gost>).
 
-Example overview: A British woman claimed to be able to distinguish whether milk or tea was added to the cup first. To test, Ronald Fisher gave her 8 cups of tea, in four of which milk was added first. The null hypothesis is that there is no association between the true order of pouring and the woman's guess, the alternative, that there is a positive association.
+Example overview: A British woman claimed to be able to distinguish whether milk or tea was added to the cup first. To test Ronald Fisher gave her 8 cups of tea, in four of which milk was added first. The null hypothesis is that there is no association between the true order of pouring and the woman's guess, the alternative, that there is a positive association.
 
 ```{r}
 TeaTasting <-
@@ -452,12 +452,14 @@ If the OR is greater than 1, then A and B are associated (correlated) in the sen
 
 Conversely, if the OR is less than 1, then A and B are negatively correlated, and the presence of one event reduces the odds of the other event occurring.
 
-This measure is also often used in case-control studies.
+The output of 6.408309 is likely due to low power or sample size.
 
-**Task:** Let X be a journal, say either Mathematics Magazine or Science, and let Y be the number of articles on the topics of mathematics and biology appearing in a given issue of one of these journals. If Mathematics Magazine has five articles on math and one on biology, and Science has none on math and four on biology. Determine if there is an association between the journal and the topic.
+This measure is also often used in medical case-control studies.
+
+**Task:** Let X be a journal, say either Mathematics Magazine or Science, and let Y be the number of articles on the topics of mathematics and biology appearing in a given issue of one of these journals. If Mathematics Magazine has five articles on math and one on biology, and Science has none on math and four on biology. Determine if there is an association between the journal and the topic. What does the odds ratio refer to here?
 
 ```{r}
 
 ```
 
-#### Give feedback to this 2-day training: <https://forms.gle/CPWr9f4gJbA6fyij8>
+#### **This marks the end of Day 2. Congrats!** 

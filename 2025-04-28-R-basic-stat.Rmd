@@ -29,7 +29,7 @@ if(!require(pwr)){
 }
 ```
 
-### Day 1 
+### Day 1
 
 #### **Warm-up: Exploratory data analysis on the `hellung` dataset (from the ISwR library)**
 
@@ -66,46 +66,14 @@ data(hellung)
 ```{r}
 # correlation function provided here
 #cor(hellung$conc, hellung$diameter)
-```
-
-#### Example of a power analysis for a two-sample t-test
-
-Theory: <https://zenodo.org/records/14883678/files/Introduction_to_hypothesis_testing_25.pdf?download=1>
-
-Here we have an example of using Lehr's rule to determine the correct sample size for a two-sample t-test.
-
-```{r}
-# Step 1: Define Parameters
-effect_size <- 0.5  # Medium effect size (Cohen’s d)
-population_variance <- 15^2  # Variance (assuming SD = 15)
-
-# Step 2: Lehr's Rule Calculation 
-sample_size_one_sided <- (8 * population_variance) / (effect_size^2)
-sample_size_two_sided <- (16 * population_variance) / (effect_size^2)
-
-cat("Estimated sample size (one-sided test):", ceiling(sample_size_one_sided), "\n")
-cat("Estimated sample size (two-sided test):", ceiling(sample_size_two_sided), "\n")
-
-# Step 3: Power Analysis using pwr.t.test()
-power_analysis <- pwr.t.test(d = effect_size, power = 0.8, sig.level = 0.05, type = "two.sample")
-cat("Power analysis suggested sample size per group:", ceiling(power_analysis$n), "\n")
-
-# Step 4: Simulate Data and Perform t-test
-set.seed(123)  # For reproducibility
-n <- ceiling(power_analysis$n)  # Use the computed sample size
-
-group1 <- rnorm(n, mean = 100, sd = sqrt(population_variance))  # Simulated data for group 1
-group2 <- rnorm(n, mean = 100 + (effect_size * sqrt(population_variance)), sd = sqrt(population_variance))  # Group 2 with effect size applied
-
-# Perform a statistical t-test
-t_test_result <- t.test(group1, group2, var.equal = TRUE)
-print(t_test_result)
 
 ```
 
 #### **Hypothesis testing**
 
-Theory: <https://zenodo.org/records/14883678/files/Introduction_to_hypothesis_testing_25.pdf?download=1>
+Theory:
+
+<https://zenodo.org/records/15282248/files/Introduction_to_hypothesis_testing_25_new_ver.pdf?download=1>
 
 Let's now do some hypothesis testing in R!
 
@@ -184,7 +152,7 @@ Let's check if the assumptions for the paired t-test are met:
 
 -   each of the paired measurements must be obtained from the same subject (data collection protocol/help)
 
--   the measured difference is normally distributed (TODO below)
+-   the measured difference is normally distributed
 
 ```{r}
 
@@ -211,9 +179,6 @@ energy
 Checking if the following assumptions are met:
 
 -   energy expenditure data in each group are normally distributed
-
-<!-- -->
-
 -   the variances for two independent groups are equal (hint: `levene_test()`) (F-test is for \<= 2 groups, the levene test compares more groups)
 
 ```{r}
@@ -225,6 +190,40 @@ Checking if the following assumptions are met:
 Now let's test if there is a significant difference between the lean and obese group.
 
 ```{r}
+
+```
+
+#### Example of a power analysis for a two-sample t-test
+
+Here we have an example of using Lehr's rule to determine the correct sample size for a two-sample t-test.
+
+```{r}
+
+# Step 1: Define Parameters
+effect_size <- 0.5  # Medium effect size (Cohen’s d)
+population_variance <- 15^2  # Variance (assuming SD = 15)
+
+# Step 2: Lehr's Rule Calculation 
+sample_size_one_sided <- (8 * population_variance) / (effect_size^2)
+sample_size_two_sided <- (16 * population_variance) / (effect_size^2)
+
+cat("Estimated sample size (one-sided test):", ceiling(sample_size_one_sided), "\n")
+cat("Estimated sample size (two-sided test):", ceiling(sample_size_two_sided), "\n")
+
+# Step 3: Power Analysis using pwr.t.test()
+power_analysis <- pwr.t.test(d = effect_size, power = 0.8, sig.level = 0.05, type = "two.sample")
+cat("Power analysis suggested sample size per group:", ceiling(power_analysis$n), "\n")
+
+# Step 4: Simulate Data and Perform t-test
+set.seed(123)  # For reproducibility
+n <- ceiling(power_analysis$n)  # Use the computed sample size
+
+group1 <- rnorm(n, mean = 100, sd = sqrt(population_variance))  # Simulated data for group 1
+group2 <- rnorm(n, mean = 100 + (effect_size * sqrt(population_variance)), sd = sqrt(population_variance))  # Group 2 with effect size applied
+
+# Perform a statistical t-test
+t_test_result <- t.test(group1, group2, var.equal = TRUE)
+print(t_test_result)
 
 ```
 
@@ -259,7 +258,8 @@ print(p_values)
 As we are comparing multiple groups against the same hypothesis, multiple testing correction should be undertaken - please adjust p-values using Bonferroni and Holm correction.
 
 ```{r}
-# TODO: using `p.adjust()` adjust the double "p_values" using Bonferroni and Holm
+# TODO: using `p.adjust()` adjust the double "p_values" using Bonferroni (p_adjusted_bonferroni)
+# and Holm (p_adjusted_holm)
 ##########################################################
 # add your code here
 
@@ -304,7 +304,9 @@ p_values_dataframe
 
 #### **Non-parametric test for two samples (air quality data set)**
 
-Theory: <https://zenodo.org/records/14883678/files/Parametric_and_non_parametric_tests_25.pdf?download=1>
+Theory:
+
+<https://zenodo.org/records/15282248/files/Parametric_and_non_parametric_tests_25_new_ver.pdf?download=1>
 
 **Task**: Perform the Mann-Whitney U Test to check for the significant difference in ozone levels in May and July from the `airquality` data set.
 
@@ -355,4 +357,12 @@ Perform the Mann-Whitney U Test (hint: `wilcox_test()`) to check for the differe
 t.test(Ozone ~ Month, data = data, exact = FALSE)
 ```
 
-**This marks the end of Day 1. Congrats! See you next week.**
+**Task:** A nutritionist is testing a new diet plan. They measure the weights of 10 people before (vector `before`) and after (vector `after`) following the diet for 4 weeks. Determine if the new diet plan has a significant effect. Make sure to check for the normality of the differences and then decide on the statistical test.
+
+```{r}
+# Before and after weights
+before <- c(80, 75, 90, 85, 78, 88, 92, 77, 85, 89)
+after  <- c(78, 73, 85, 83, 77, 85, 90, 76, 82, 88)
+```
+
+**This marks the end of Day 1. Congrats!**
