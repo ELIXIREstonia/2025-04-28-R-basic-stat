@@ -4,11 +4,11 @@ ELIXIR-EE training course on introduction to statistics in R. This course is des
 
 
 
-This course is a mixture of lectures and practicals. The main files for practising are the [2025-02-18-R-basic-stat.Rmd](2025-02-18-R-basic-stat.Rmd) and [day_2.zip](day_2.zip). R markdown allows code (examples) and explanation / documentation to be in the same document in a nicely formatted, well structured manner.
+This course is a mixture of lectures and practicals. The main files for practising are the [2025-04-28-R-basic-stat.Rmd](2025-04-28-R-basic-stat.Rmd) and [day_2.zip](day_2.zip). R markdown allows code (examples) and explanation / documentation to be in the same document in a nicely formatted, well structured manner.
 
 Data files needed in the code are located in the `data` folder.
 
-The lecture slides are found in [https://zenodo.org/records/14883678](https://zenodo.org/records/15282248)
+The lecture slides are found in [https://zenodo.org/records/15294211](https://zenodo.org/records/15294211)
 
 Learning outcomes:
 
