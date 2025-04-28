@@ -73,7 +73,7 @@ data(hellung)
 
 Theory:
 
-<https://zenodo.org/records/15282248/files/Introduction_to_hypothesis_testing_25_new_ver.pdf?download=1>
+[https://zenodo.org/records/](https://zenodo.org/records/15282248/files/Introduction_to_hypothesis_testing_25_new_ver.pdf?download=1){.uri}[15294211/files/Introduction_to_hypothesis_testing_25_new_ver.pdf?download=1](https://zenodo.org/records/15294211/files/Introduction_to_hypothesis_testing_25_new_ver.pdf?download=1)
 
 Let's now do some hypothesis testing in R!
 
@@ -306,7 +306,7 @@ p_values_dataframe
 
 Theory:
 
-<https://zenodo.org/records/15282248/files/Parametric_and_non_parametric_tests_25_new_ver.pdf?download=1>
+<https://zenodo.org/records/15294211/files/Parametric_and_non_parametric_tests_25_new_ver.pdf?download=1>
 
 **Task**: Perform the Mann-Whitney U Test to check for the significant difference in ozone levels in May and July from the `airquality` data set.
 

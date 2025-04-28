@@ -126,7 +126,7 @@ You can use \* to combine different parameters e.g. aov(iris\$Species \~ iris\$P
 
 #### **Correlation and regression**: Pearson, Spearman (rank), Kendall (rank), linear/polynomial regression, linear mixed models.
 
-Theory: <https://zenodo.org/records/15282248/files/Corr_simple_reg_25_new_ver.pdf?download=1>
+Theory: <https://zenodo.org/records/15294211/files/Corr_simple_reg_25_new_ver.pdf?download=1>
 
 **Task**: Find the correlation between the two columns (velocity and glucose) in the data set `thuesen`. Test with the suitable correlations. What parameter do you have to add to avoid getting the error message? (for NA values)
 
@@ -136,7 +136,7 @@ data(thuesen)
 head(thuesen)
 ```
 
-Check the assumption for Pearson correlation:
+<https://zenodo.org/records/15282248/files/Corr_simple_reg_25_new_ver.pdf?download=1>Check the assumption for Pearson correlation:
 
 -   the data follows a bivariate normal distribution
 
