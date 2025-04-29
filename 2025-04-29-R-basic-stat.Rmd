@@ -75,13 +75,14 @@ ggplot(iris, aes(sample = Petal.Length)) +
   ) 
 ```
 
-Now let's run the ANOVA test (hint: `aov()`, ensure that left-hand is numeric, and right-hand is a factor) and take a look at the summary of the test (`summary()`).
+Now let's run the ANOVA test (hint: `aov()`, ensure that left-hand value is numeric, and right-hand value is a factor) and take a look at the summary of the test (`summary()`).
 
 ```{r}
 
 ```
 
 ![](images/clipboard-1166017864.png)Residuals=Observed Petal.Length−Species Group Mean Petal.Length
+
 What can we conclude from this?
 
 -   there are very strong differences in petal length between species
@@ -92,23 +93,11 @@ If the p-value indicates a significant result, you can follow up with post-hoc t
 
 For performing multiple pairwise comparisons between groups, Tukey post-hoc test is often used (HSD = honestly significant difference, hint: use `TukeyHSD`). Plot the output of `TukeyHSD` using the built-in `plot()`.
 
-there are very strong differences in petal.length between species
-
-the species explains almost all the variability in peal length
-
 ```{r}
 
 ```
 
-Confidence interval (C.I.) interpretation: 95% C.I. means that true estimate of effect (difference in means) lies within 2 standard errors (SE) of the population mean 95 times out of 100.
-
-$$
-SE = \frac{s}{\sqrt{n}} \newline 
-s = \sqrt{\frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2} \newline
-\bar{x} = \frac{1}{n} \sum_{i=1}^n x_i
-$$
-
-where $s$ is the sample standard deviation, $n$ is the sample size, and $\bar{x}$ is the sample mean.
+What does it indicate?
 
 ### Non-parametric multiple group testing: Kruskal-Wallis
 
@@ -116,6 +105,7 @@ If any of the ANOVA assumptions (independent observations, equal variance, norma
 
 ```{r}
 #kruskal_test(iris, Petal.Length ~ Species)
+#dunn_test(data = iris, formula = Petal.Length ~ Species, p.adjust.method = "bonferroni")
 ```
 
 NB! while doing multiple pairwise comparisons, you need to correct the p-value (either by Bonferroni, Holm etc., the approaches were covered on Day 1)
@@ -126,7 +116,7 @@ You can use \* to combine different parameters e.g. aov(iris\$Species \~ iris\$P
 
 #### **Correlation and regression**: Pearson, Spearman (rank), Kendall (rank), linear/polynomial regression, linear mixed models.
 
-Theory: <https://zenodo.org/records/15294211/files/Corr_simple_reg_25_new_ver.pdf?download=1>
+Theory: <https://zenodo.org/records/15301106/files/Day3_corr_simple_reg_25_new_ver.pdf?download=1>
 
 **Task**: Find the correlation between the two columns (velocity and glucose) in the data set `thuesen`. Test with the suitable correlations. What parameter do you have to add to avoid getting the error message? (for NA values)
 
@@ -136,7 +126,7 @@ data(thuesen)
 head(thuesen)
 ```
 
-<https://zenodo.org/records/15282248/files/Corr_simple_reg_25_new_ver.pdf?download=1>Check the assumption for Pearson correlation:
+Check the assumption for Pearson correlation:
 
 -   the data follows a bivariate normal distribution
 
@@ -166,11 +156,11 @@ Let's find the regression line for this relationship.
 
 ```
 
-Now standardize glucose and find the linear model again (check out `scale` for this)
-
 **What is standardization?**
 
-Standardization is done by scaling the independent/predictor variable. When variables are on very different scales (not necessarily the case here), it can lead numerical instability. Standardizing also leads to better interpretation of model coefficients, they show the relative importance of each predictor variable in terms of standard deviations instead of raw units.
+Standardization is done by scaling the independent/predictor variable. When variables are on very different scales (not necessarily the case here), it can lead to numerical instability. Standardizing also leads to better interpretation of model coefficients, they show the relative importance of each predictor variable in terms of standard deviations instead of raw units.
+
+Now standardize glucose and find the linear model again (check out `scale` for this, what do center = T and scale = T mean?)
 
 ```{r}
 
@@ -221,12 +211,6 @@ Answer:
 
 **Polynomial regression**
 
-**Task**: fit a polynomial regression model on the same `thuesen` dataset (hint: make use of `poly`)
-
-```{r}
-
-```
-
 In some cases polynomial regression is more important than in other cases. Let's look at an example below.
 
 ```{r}
@@ -236,7 +220,7 @@ data(iris)
 linear_model <- lm(Sepal.Length ~ Sepal.Width, data = iris)
 
 # Fit a polynomial regression model
-poly_model <- lm(Sepal.Length ~ poly(Sepal.Width, 5), data = iris)
+poly_model <- lm(Sepal.Length ~ poly(Sepal.Width, 3, raw = TRUE), data = iris)
 
 # Create predictions for the linear and polynomial models
 iris$pred_linear <- predict(linear_model, iris)
@@ -255,6 +239,12 @@ ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length)) +
        x = "Sepal Width (cm)",
        y = "Sepal Length (cm)") +
   theme_minimal()
+```
+
+**Task**: fit a polynomial regression model on the same `thuesen` dataset (hint: make use of `poly`)
+
+```{r}
+
 ```
 
 Recall ANOVA? ANOVA is a special case of linear regression where you treat the group membership (Species) as categorical predictor, and the main interest is whether group means differ significantly. Let's take a look.
@@ -300,6 +290,8 @@ where $\chi^2$ is the Chi-Square statistic, $r$ is the number of rows (categorie
 ![](images/clipboard-2633181539.png)
 
 <https://www.jmp.com/en_gb/statistics-knowledge-portal/chi-square-test/chi-square-distribution.html>
+
+df = (nr of rows - 1)\*(nr of col-s -1)
 
 The assumptions:
 
@@ -352,7 +344,7 @@ Interpreting the output:
 
 -   χ2-statistic
 
--   degrees of freedom: amount of different categories - 1
+-   degrees of freedom: (nr of rows - 1)\*(nr of col-s -1)
 
 -   p-value:
 
@@ -462,4 +454,4 @@ This measure is also often used in medical case-control studies.
 
 ```
 
-#### **This marks the end of Day 2. Congrats!** 
+#### **This marks the end of Day 2. Congrats!**
