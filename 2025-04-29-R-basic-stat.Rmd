@@ -307,13 +307,13 @@ Null hypothesis: no significant association between the variables in the populat
 
 Alternative hypothesis: the variables are dependent. Knowing the value of one variable helps to predict the value of the other variable.
 
-Example scenario: Suppose you have a group of 100 students: 60 are left-handed, 40 are right-handed and 70 of them like cats and 30 like dogs. We want to test whether there is an association between handedness (right, left) and pet preference (dog, cat).
+Example scenario: Suppose you have a group of 110 students: 70 are left-handed, 40 are right-handed and 25 right-handed students and 45 left-handed students like cats and the rest (40) like dogs. We want to test whether there is an association between handedness (right, left) and pet preference (dog, cat).
 
 Let's create a contingency table:
 
 ```{r}
-data <- matrix(c(60, 40, 30, 70), nrow = 2, byrow = TRUE)
-rownames(data) <- c("Left-handed", "Right-handed")
+data <- matrix(c(15, 25, 25, 45), nrow = 2, byrow = TRUE)
+rownames(data) <- c("Right-handed", "Left-handed")
 colnames(data) <- c("Likes dogs", "Likes cats")
 
 # View the contingency table
@@ -453,5 +453,7 @@ This measure is also often used in medical case-control studies.
 ```{r}
 
 ```
+
+Check out <https://mathworld.wolfram.com/FishersExactTest.html> for more information.
 
 #### **This marks the end of Day 2. Congrats!**

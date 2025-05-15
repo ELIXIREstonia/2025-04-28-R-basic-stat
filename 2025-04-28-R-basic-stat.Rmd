@@ -43,7 +43,7 @@ if(!require(pwr)){
 data(hellung)
 ```
 
-**Task 1**: Provide minimum two ways to find the mean of glucose.
+**Task 1**: Provide minimum two ways to find the mean of cell concentration.
 
 ```{r}
 
@@ -198,25 +198,37 @@ Now let's test if there is a significant difference between the lean and obese g
 Here we have an example of using Lehr's rule to determine the correct sample size for a two-sample t-test.
 
 ```{r}
-
 # Step 1: Define Parameters
-effect_size <- 0.5  # Medium effect size (Cohen’s d)
+effect_size <- 7.5 # difference in means if cohen's d is 0.5 and sd is common for both groups
+cohens_d <- 0.5
 population_variance <- 15^2  # Variance (assuming SD = 15)
 
-# Step 2: Lehr's Rule Calculation 
+# Step 2: Lehr's Rule Calculation - uses rough constants: 16 and 8 to make quicker estimates, tends to overestimate
+
 sample_size_one_sided <- (8 * population_variance) / (effect_size^2)
 sample_size_two_sided <- (16 * population_variance) / (effect_size^2)
+
+sample_size_one_sided_cohen <- 8 / (cohens_d^2)
+sample_size_two_sided_cohen <- 16 / (cohens_d^2)
 
 cat("Estimated sample size (one-sided test):", ceiling(sample_size_one_sided), "\n")
 cat("Estimated sample size (two-sided test):", ceiling(sample_size_two_sided), "\n")
 
-# Step 3: Power Analysis using pwr.t.test()
-power_analysis <- pwr.t.test(d = effect_size, power = 0.8, sig.level = 0.05, type = "two.sample")
-cat("Power analysis suggested sample size per group:", ceiling(power_analysis$n), "\n")
+cat("Estimated sample size (one-sided test):", ceiling(sample_size_one_sided_cohen), "\n")
+cat("Estimated sample size (two-sided test):", ceiling(sample_size_two_sided_cohen), "\n")
+
+
+# Step 3: Power Analysis using pwr.t.test() - uses the t-distribution
+power_analysis_two_sided <- pwr.t.test(d = cohens_d, power = 0.8, sig.level = 0.05, type = "two.sample")
+cat("Power analysis suggested sample size per group (two-sided):", ceiling(power_analysis_two_sided$n), "\n")
+
+power_analysis_one_sided <- pwr.t.test(d = cohens_d, power = 0.8, sig.level = 0.05, type = "two.sample", alternative="greater")
+cat("Power analysis suggested sample size per group (one-sided):", ceiling(power_analysis_one_sided$n), "\n")
+
 
 # Step 4: Simulate Data and Perform t-test
 set.seed(123)  # For reproducibility
-n <- ceiling(power_analysis$n)  # Use the computed sample size
+n <- ceiling(power_analysis_two_sided$n)  # Use the computed sample size
 
 group1 <- rnorm(n, mean = 100, sd = sqrt(population_variance))  # Simulated data for group 1
 group2 <- rnorm(n, mean = 100 + (effect_size * sqrt(population_variance)), sd = sqrt(population_variance))  # Group 2 with effect size applied
@@ -224,7 +236,6 @@ group2 <- rnorm(n, mean = 100 + (effect_size * sqrt(population_variance)), sd = 
 # Perform a statistical t-test
 t_test_result <- t.test(group1, group2, var.equal = TRUE)
 print(t_test_result)
-
 ```
 
 #### **Multiple testing correction - when and how to use this?**
@@ -265,38 +276,18 @@ As we are comparing multiple groups against the same hypothesis, multiple testin
 
 ##########################################################
 
-# this section will create the correct siginificance values for the Holm correction
 num_tests <- length(p_values)
-p_order <- order(p_values)
-p_sorted <- p_values[p_order]
 
-# Compute Holm thresholds
-holm_thresholds <- 0.05 / (num_tests:1)  # 0.05 / (n, n-1, ..., 1)
-
-# Determine significance step-wise
-holm_significant_sorted <- rep("No", num_tests)
-for (i in 1:num_tests) {
-  if (p_sorted[i] < holm_thresholds[i]) {
-    holm_significant_sorted[i] <- "Yes"
-  } else {
-    break  # Once a non-significant value is found, stop marking further ones
-  }
-}
-
-# Reorder results back to original order
-holm_significant <- holm_significant_sorted[order(p_order)]
-
-
-# Show results
 p_values_dataframe <-
   data.frame(
     Group = names(groups),
     Raw_p = p_values,
     Raw_significance = ifelse(p_values < 0.05, "Yes", "No"),
     Bonferroni_p = p_adjusted_bonferroni,
-    Bonferroni_significance = ifelse(p_adjusted_bonferroni < (0.05 / no_of_tests), "Yes", "No"),
+    # already adjusted
+    Bonferroni_significance = ifelse(p_adjusted_bonferroni < 0.05 , "Yes", "No"),
     Holm_p = p_adjusted_holm,
-    Holm_significance = holm_significant
+    Holm_significance = ifelse(p_adjusted_holm < 0.05 , "Yes", "No")
   )
 
 p_values_dataframe
